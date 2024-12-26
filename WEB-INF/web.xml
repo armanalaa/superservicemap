@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app version="3.0" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd">
+    <servlet>
+        <servlet-name>SparqlProxy</servlet-name>
+        <servlet-class>org.disit.servicemap.SparqlProxy</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>SparqlProxy</servlet-name>
+        <url-pattern>/sparql</url-pattern>
+    </servlet-mapping>
+    <session-config>
+        <session-timeout>
+            30
+        </session-timeout>
+    </session-config>
+    <error-page>
+        <error-code>400</error-code>
+        <location>/error.jsp</location>
+    </error-page>
+    <error-page>
+        <error-code>401</error-code>
+        <location>/error.jsp</location>
+    </error-page>
+    <error-page>
+        <error-code>404</error-code>
+        <location>/error.jsp</location>
+    </error-page>
+    <error-page>
+        <exception-type>java.lang.Exception</exception-type>
+        <location>/exception.jsp</location>
+    </error-page>
+    <security-constraint>
+      <web-resource-collection>
+        <web-resource-name>Admin pages</web-resource-name>
+        <url-pattern>/photo.jsp</url-pattern>
+        <url-pattern>/comments.jsp</url-pattern>
+        <url-pattern>/conf.jsp</url-pattern>
+        <url-pattern>/photo-thumbs.jsp</url-pattern>
+        <url-pattern>/solr/*</url-pattern>
+        <url-pattern>/phoenix/*</url-pattern>
+        <http-method>GET</http-method>
+        <http-method>POST</http-method>
+      </web-resource-collection>
+
+      <auth-constraint>
+        <role-name>admin</role-name>
+      </auth-constraint>
+
+      <user-data-constraint>
+        <!-- transport-guarantee can be CONFIDENTIAL, INTEGRAL, or NONE -->
+        <transport-guarantee>NONE</transport-guarantee>
+      </user-data-constraint>
+    </security-constraint>
+
+    <login-config>
+      <auth-method>BASIC</auth-method>
+    </login-config>    
+</web-app>

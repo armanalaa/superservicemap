@@ -1,0 +1,586 @@
+<html>
+
+    <head>
+        <title>ServiceMap</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+        <link rel="stylesheet" href="css/leaflet-gps.css" type="text/css" />
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.5.1/dist/leaflet.css"
+   integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
+   crossorigin="" />
+        <script src="https://unpkg.com/leaflet@1.5.1/dist/leaflet.js"
+   integrity="sha512-GffPMF3RvMeYyc1LWMHtK8EbPv0iNZ8/oTtHPx9/cc2ILxQ+u905qIwdpULaqDkyBKgOaB57QTMg7ztg8Jm2Og=="
+   crossorigin=""></script>
+        <!--<script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>-->
+        <script src="https://code.jquery.com/jquery-1.11.2.min.js"></script>
+        <script src="https://code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+        <!--<script src="http://code.jquery.com/ui/1.10.4/jquery-ui.js"></script>-->
+        <script src="https://code.jquery.com/ui/1.11.2/jquery-ui.js"></script>
+        <script src="https://code.highcharts.com/highcharts.js"></script>
+        <script src="https://code.highcharts.com/highcharts-3d.js"></script>
+        <link rel="stylesheet" href="https://code.jquery.com/ui/1.10.4/themes/smoothness/jquery-ui.css" />	
+        <link rel="stylesheet" href="css/leaflet.awesome-markers.css">
+        <script src="js/leaflet.awesome-markers.min.js"></script>
+        <script src="js/jquery.dialogextend.js"></script>
+        <script src="js/leaflet-gps.js"></script>
+        <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
+        <script src="js/mustache.js"></script> 
+        <script src="js/mustache.min.js"></script>
+        <script src="js/ViewManager.js"></script>
+        <script src="js/jquery.dataTables.min.js"></script>
+        <script src="js/moment.min.js"></script>
+        <script src="js/datetime-moment.js"></script>
+        <script src="js/jquery.timepicker.min.js"></script>
+        <script src="js/zoomHandler.js"></script>
+        <script src="js/oms.min.js"></script>
+        <!-- code per gallery -->
+        <script type="text/javascript" src="fancybox/lib/jquery.mousewheel-3.0.6.pack.js"></script>
+        <link rel="stylesheet" href="fancybox/source/jquery.fancybox.css" type="text/css" media="screen" />
+        <script type="text/javascript" src="fancybox/source/jquery.fancybox.pack.js"></script>
+        <link rel="stylesheet" href="fancybox/source/helpers/jquery.fancybox-buttons.css" type="text/css" media="screen" />
+        <script type="text/javascript" src="fancybox/source/helpers/jquery.fancybox-buttons.js"></script>
+        <script type="text/javascript" src="fancybox/source/helpers/jquery.fancybox-media.js"></script>
+        <script src="js/wicket.js"></script>
+        <script src="js/wicket-leaflet.js"></script>
+        <!--  CARICAMENTO DEL FILE utility.js CON FUNZIONI NECESSARIE  -->
+        <script type="text/javascript" charset="utf-8" src="js/utility.js?force=a"></script>
+        <script type="text/javascript" src="js/pathsearch.js"></script>
+        <script type="text/javascript" src="js/save_embed.js"></script>
+        
+
+        <link rel="stylesheet" href="fancybox/source/helpers/jquery.fancybox-thumbs.css" type="text/css" media="screen" />
+        <script type="text/javascript" src="fancybox/source/helpers/jquery.fancybox-thumbs.js"></script>
+        <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css" type="text/css" />
+        <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css" type="text/css" />
+        <link rel="stylesheet" href="css/style.css" type="text/css" />
+        <link rel="stylesheet" href="css/jquery.dataTables.min.css" type="text/css" />
+        <link rel="stylesheet" href="css/jquery.timepicker.min.css" type="text/css" />
+        
+        <!--  Ala's stuff  -->
+        <script type="text/javascript" src="config.json"></script>
+        <script src="https://requirejs.org/docs/release/2.3.5/minified/require.js"></script>  
+    </head>
+	
+	
+<body class="Chrome" onload="">
+
+        <script>
+            (function (i, s, o, g, r, a, m) {
+                i['GoogleAnalyticsObject'] = r;
+                i[r] = i[r] || function () {
+                    (i[r].q = i[r].q || []).push(arguments)
+                }, i[r].l = 1 * new Date();
+                a = s.createElement(o),
+                        m = s.getElementsByTagName(o)[0];
+                a.async = 1;
+                a.src = g;
+                m.parentNode.insertBefore(a, m)
+            })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+            ga('create', 'UA-64916363-1', 'auto');
+            ga('send', 'pageview');
+        </script>
+        <script>
+            var mode = "query";
+            var api = "";
+            window.configurationData = {};
+            window.configurationData.enableSensorValidation="true";
+            window.configurationData.sensorValidationUrl="https://www.snap4city.org/sensor-validate/";            
+        </script>
+
+<select id="superSm_selector" style="position:relative;left:700px;z-index: 1001;top: 40px;" name="elencoagenzie"><option value=""> - Select an Organization -</option>
+<option value="">All Organizations</option>
+<option value="https://antwerp.snap4city.org/ServiceMap/">Antwerp</option>
+<option value="https://helsinki.snap4city.org/ServiceMap/">Helsinki</option>
+<option value="https://servicemap.km4city.org/">Tuscany</option>
+<option value="https://www.disit.org/smosm/">Sardinia, Emilia Romagna, Veneto</option>
+</select>
+
+        <div id="map">
+            <div class="menu" id="help">
+                <a href="http://www.disit.org/servicemap" title="Aiuto Service Map" target="_blank"><img src="img/help.png" alt="help SiiMobility ServiceMap" width="28" /></a>
+            </div>
+        </div>
+        
+        <div id="menu-dx" class="menu">
+            <div class="header"><span name="lbl" caption="Hide_Menu_sx"> - Hide Menu</span></div>
+            <div class="content" style="display: block;">
+                <div id="tabs-servizi" class="ui-tabs ui-widget ui-widget-content ui-corner-all">
+                    <ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all" role="tablist">
+                        <li class="ui-state-default ui-corner-top ui-tabs-active ui-state-active" role="tab" tabindex="0" aria-controls="tabs-4" aria-labelledby="ui-id-6" aria-selected="true" aria-expanded="true"><a href="#tabs-4" class="ui-tabs-anchor" role="presentation" tabindex="-1" id="ui-id-6"><span name="lbl" caption="Search_Regular_Services">Regular Services</span></a></li>
+                        <li class="ui-state-default ui-corner-top" role="tab" tabindex="-1" aria-controls="tabs-5" aria-labelledby="ui-id-7" aria-selected="false" aria-expanded="false"><a href="#tabs-5" class="ui-tabs-anchor" role="presentation" tabindex="-1" id="ui-id-7"><span name="lbl" caption="Search_Transversal_Services">Transversal Services</span></a></li>
+                        <!-- <li><a href="#tree"><span name="lbl" caption="Search_Services">Test Tree Services</span></a></li> -->
+                        
+                    </ul>    
+                    <div id="tabs-4" aria-labelledby="ui-id-6" class="ui-tabs-panel ui-widget-content ui-corner-bottom" role="tabpanel" aria-hidden="false">
+                        <div class="use-case-4">
+                            <span name="lbl" caption="Services_Categories_R">Services Categories</span> 
+                            <br> 
+                            <input type="checkbox" name="macro-select-all" id="macro-select-all" value="Select All"> <span name="lbl" caption="Select_All_R">De/Select All</span>
+                            <div id="categorie">
+                                
+                                <input type="checkbox" name="Accommodation" value="Accommodation" class="macrocategory"> <img src="img/mapicons/Accommodation.png" height="23" width="20" align="top"> <span class="Accommodation macrocategory-label">Accommodation</span> <span class="toggle-subcategory" title="Mostra sottocategorie">+</span>
+                            <div class="subcategory-content">
+<input type="checkbox" name="Agritourism" value="Agritourism" class="sub_Accommodation subcategory"> <img src="img/mapicons/Accommodation_Agritourism.png" height="19" width="16" align="top">
+<span class="Accommodation subcategory-label">Agritourism</span>
+<br>
+<input type="checkbox" name="Beach_resort" value="Beach_resort" class="sub_Accommodation subcategory"> <img src="img/mapicons/Accommodation_Beach_resort.png" height="19" width="16" align="top">
+<span class="Accommodation subcategory-label">Beach_resort</span>
+<br>
+</div>
+
+<br>
+<br>
+                        </div>
+                            <span name="lbl" caption="Filter_Results_dx_R">Filter</span>:
+                            <input type="text" name="serviceTextFilter" id="serviceTextFilter" placeholder="search text into service" onkeypress="event.keyCode == 13 ? ricercaServizi('categorie', null, null) : false"><br>    
+                            Service providing value type:<select id="valueTypeFilter" name="valueTypeFilter">
+<option value="">select value type</option>
+<option>BC_concentration</option>
+<option>CO2_concentration</option>
+</select><br>
+<span name="lbl" caption="Num_Results_dx_R">N. results</span>:
+                            <select id="nResultsServizi" name="nResultsServizi">
+                                <option value="10">10</option>
+                                <option value="20">20</option>
+                                <option value="50">50</option>
+                                <option value="100" selected="selected">100</option>
+                                <option value="200">200</option>
+                                <option value="500">500</option>
+                                <option value="0">No Limit</option>
+                            </select>
+                            <br>
+                            <hr>
+                            <span name="lbl" caption="Search_Range_R">Search range</span>
+                            <select id="raggioricerca" name="raggioricerca">
+                                <option value="0.1">100 mt</option>
+                                <option value="0.2">200 mt</option>
+                                <option value="0.3">300 mt</option>
+                                <option value="0.5">500 mt</option>
+                                <option value="1">1 km</option>
+                                <option value="2">2 km</option>
+                                <option value="5">5 km</option>
+                                <option value="area" selected="selected">visible area</option>
+                                <option value="geo">specific area</option>
+                                <option value="inside">inside</option>
+                            </select><br>
+                            <span name="lbl" caption="Search_Area_R">Search area</span>
+                            <select id="geosearch" name="geosearch" disabled="disabled">
+                              <option value="select">select...</option>
+                              <option value="area near fortezza">area near fortezza</option>
+                              <option value="ATAF 17B">ATAF 17B</option>
+                              <option value="ATAF 4">ATAF 4</option>
+                              <option value="ZCS4D">ZCS4D</option>
+                              <option value="ZCS5D">ZCS5D</option>
+                            </select>
+                            <hr>
+                            <!--<input type="button" value="Cerca!" id="pulsante-ricerca" onclick="ricercaServizi();" />
+                             <input type="button" value="Pulisci" id="pulsante-reset" onclick="resetTotale();" /> !-->
+                            <div class="menu" id="serviceSearch">
+                                <img src="img/search_icon.png" alt="Search Services" width="24" onclick="ricercaServizi('categorie', null, null);">
+                            </div>
+                            <div class="menu" id="serviceSearchChart">
+                                <img src="img/search_chart.png" alt="Search Chart" width="24" onclick="showChart(selezione, $('#raggioricerca').val(), coordinateSelezione);">
+                            </div>
+                            <div class="menu" id="clearAll">
+                                <img src="img/clear_icon.png" alt="Clear all" width="28" onclick="resetTotale();">
+                            </div>
+                            <div id="chart_dialog" title="Query results organized by category">
+                                <p></p>
+                                <div id="chart_container"></div>
+                            </div>
+                            <div class="menu" id="saveQuery" style="display: none;">
+                                <img src="img/save.png" alt="Salva la query" width="28" onclick="save_handler();">
+                            </div>
+                            <br>
+
+                        </div>
+                    </div>
+                    <div id="tabs-5" aria-labelledby="ui-id-7" class="ui-tabs-panel ui-widget-content ui-corner-bottom" role="tabpanel" aria-hidden="true" style="display: none;">
+                        <div class="use-case-5">
+                            <!--<h3>Coming soon...</h3>-->
+                            <!-- AGGIUNTA TRANSVERSAL SERVICES -->
+                            <!-- <input type="text" name="serviceTextFilter_t" id="serviceTextFilter_t" placeholder="search text into service" onkeypress="event.keyCode == 13 ? ricercaServizi('categorie_t', null, null) : false"/><br /> -->
+                            <span name="lbl" caption="Services_Categories_T">Services Categories</span> 
+                            <br>
+                            <input type="checkbox" name="macro-select-all_t" id="macro-select-all_t" value="Select All"> <span name="lbl" caption="Select_All_T">De/Select All</span>
+                            <div id="categorie_t">
+                                
+                                <input type="checkbox" name="Area" value="Area" class="macrocategory"> <img src="img/mapicons/Area.png" height="23" width="20" align="top"> <span class="Area macrocategory-label">Area</span> <span class="toggle-subcategory" title="Mostra sottocategorie">+</span>
+<div class="subcategory-content">
+<input type="checkbox" name="Controlled_parking_zone" value="Controlled_parking_zone" class="sub_Area subcategory"> <img src="img/mapicons/TransferServiceAndRenting_Controlled_parking_zone.png" height="19" width="16" align="top">
+<span class="Area subcategory-label">Controlled_parking_zone</span>
+<br>
+<input type="checkbox" name="Gardens" value="Gardens" class="sub_Area subcategory"> <img src="img/mapicons/Entertainment_Gardens.png" height="19" width="16" align="top">
+<span class="Area subcategory-label">Gardens</span>
+<br>
+<input type="checkbox" name="Green_areas" value="Green_areas" class="sub_Area subcategory"> <img src="img/mapicons/Entertainment_Green_areas.png" height="19" width="16" align="top">
+<span class="Area subcategory-label">Green_areas</span>
+<br>
+<input type="checkbox" name="Sports_facility" value="Sports_facility" class="sub_Area subcategory"> <img src="img/mapicons/Entertainment_Sports_facility.png" height="19" width="16" align="top">
+<span class="Area subcategory-label">Sports_facility</span>
+<br>
+</div>
+<br>
+
+<br>
+<input type="checkbox" name="HappeningNow" value="HappeningNow" class="macrocategory"> <img src="img/mapicons/HappeningNow.png" height="23" width="20" align="top"> <span class="HappeningNow macrocategory-label">HappeningNow</span> <span class="toggle-subcategory" title="Mostra sottocategorie">+</span>
+<div class="subcategory-content">
+<input type="checkbox" name="Event" value="Event" class="sub_HappeningNow subcategory"> <img src="img/mapicons/HappeningNow_Event.png" height="19" width="16" align="top">
+<span class="HappeningNow subcategory-label">Event</span>
+<br>
+</div>
+<br>
+<input type="checkbox" name="IoTDevice" value="IoTDevice" class="macrocategory"> <img src="img/mapicons/IoTDevice.png" height="23" width="20" align="top"> <span class="IoTDevice macrocategory-label">IoTDevice</span> <span class="toggle-subcategory" title="Mostra sottocategorie">+</span>
+<div class="subcategory-content">
+<input type="checkbox" name="IoTActuator" value="IoTActuator" class="sub_IoTDevice subcategory"> <img src="img/mapicons/IoTDevice_IoTActuator.png" height="19" width="16" align="top">
+<span class="IoTDevice subcategory-label">IoTActuator</span>
+<br>
+<input type="checkbox" name="IoTSensor" value="IoTSensor" class="sub_IoTDevice subcategory"> <img src="img/mapicons/IoTDevice_IoTSensor.png" height="19" width="16" align="top">
+<span class="IoTDevice subcategory-label">IoTSensor</span>
+<br>
+</div>
+<br>
+<input type="checkbox" name="Path" value="Path" class="macrocategory"> <img src="img/mapicons/Path.png" height="23" width="20" align="top"> <span class="Path macrocategory-label">Path</span> <span class="toggle-subcategory" title="Mostra sottocategorie">+</span>
+<div class="subcategory-content">
+<input type="checkbox" name="Cycle_paths" value="Cycle_paths" class="sub_Path subcategory"> <img src="img/mapicons/TransferServiceAndRenting_Cycle_paths.png" height="19" width="16" align="top">
+<span class="Path subcategory-label">Cycle_paths</span>
+<br>
+<input type="checkbox" name="Tourist_trail" value="Tourist_trail" class="sub_Path subcategory"> <img src="img/mapicons/TourismService_Tourist_trail.png" height="19" width="16" align="top">
+<span class="Path subcategory-label">Tourist_trail</span>
+<br>
+<input type="checkbox" name="Tramline" value="Tramline" class="sub_Path subcategory"> <img src="img/mapicons/TransferServiceAndRenting_Tramline.png" height="19" width="16" align="top">
+<span class="Path subcategory-label">Tramline</span>
+<br>
+</div>
+<br>
+<input type="checkbox" name="fresh-place" value="Fresh_place" id="FreshPlace" class="macrocategory"> <img src="img/mapicons/TourismService_Fresh_place.png" height="23" width="20" align="top"> <span class="fresh-place macrocategory-label">Fresh Place</span>
+                                <br>
+                                <input type="checkbox" name="public-transport-line" value="PublicTransportLine" id="PublicTransportLine" class="macrocategory"> <img src="img/mapicons/TransferServiceAndRenting_Urban_bus.png" height="23" width="20" align="top"> <span class="public-transport-line macrocategory-label">Public Transport Line</span> 
+                                <br>
+                                <input type="checkbox" name="road-sensor" value="SensorSite" id="Sensor" class="macrocategory"> <img src="img/mapicons/TransferServiceAndRenting_SensorSite.png" height="23" width="20" align="top"> <span class="road-sensor macrocategory-label">Road Sensors</span> 
+                                <br>
+                                <input type="checkbox" name="near-bus-stops" value="BusStop" class="macrocategory" id="Bus"> <img src="img/mapicons/TransferServiceAndRenting_BusStop.png" height="23" width="20" align="top"> <span class="near-bus-stops macrocategory-label">Bus Stops</span>
+                                <br>
+                                <input type="checkbox" name="near-tram-stops" value="Tram_stops" class="macrocategory" id="Tram"> <img src="img/mapicons/TransferServiceAndRenting_Tram_stops.png" height="23" width="20" align="top"> <span class="public-transport-line macrocategory-label">Tram_stops</span>
+                                <br>
+                                <input type="checkbox" name="near-subway-station" value="Subway_station" class="macrocategory" id="Subway"> <img src="img/mapicons/TransferServiceAndRenting_Subway_station.png" height="23" width="20" align="top"> <span class="public-transport-line macrocategory-label">Subway_station</span>
+                                <br>
+                                <input type="checkbox" name="near-train-station" value="Train_station" class="macrocategory" id="Train"> <img src="img/mapicons/TransferServiceAndRenting_Train_station.png" height="23" width="20" align="top"> <span class="public-transport-line macrocategory-label">Train_station</span>
+                                <br>
+                                <input type="checkbox" name="near-ferry-stops" value="Ferry_stop" class="macrocategory" id="Ferry"> <img src="img/mapicons/TransferServiceAndRenting_Ferry_stop.png" height="23" width="20" align="top"> <span class="public-transport-line macrocategory-label">Ferry_stop</span>
+                                <br>
+                                <input type="checkbox" name="near-car-park" value="Car_park" class="macrocategory" id="TransferServiceAndRenting"> <img src="img/mapicons/TransferServiceAndRenting_Car_park.png" height="23" width="20" align="top"> <span class="TransferServiceAndRenting macrocategory-label">Car_park</span>
+                                <br>
+                                <input type="checkbox" name="near-rtz" value="Bike_sharing_rack" class="macrocategory" id="TransferServiceAndRenting"> <img src="img/mapicons/TransferServiceAndRenting_Bike_sharing_rack.png" height="23" width="20" align="top"> <span class="TransferServiceAndRenting macrocategory-label">Bike_sharing_rack</span>
+                                <br>
+                                <input type="checkbox" name="near-rtz" value="RTZgate" class="macrocategory" id="DigitaLocation"> <img src="img/mapicons/TransferServiceAndRenting_RTZgate.png" height="23" width="20" align="top"> <span class="TransferServiceAndRenting macrocategory-label">RTZgate</span>
+                                <br>
+                                <input type="checkbox" name="near-rtz" value="Fuel_station" class="macrocategory" id="DigitaLocation"> <img src="img/mapicons/TransferServiceAndRenting_Fuel_station.png" height="23" width="20" align="top"> <span class="TransferServiceAndRenting macrocategory-label">Fuel_station</span>
+                                <br>
+                                <input type="checkbox" name="near-rtz" value="Charging_stations" class="macrocategory" id="TransferServiceAndRenting"> <img src="img/mapicons/TransferServiceAndRenting_Charging_stations.png" height="23" width="20" align="top"> <span class="TransferServiceAndRenting macrocategory-label">Charging_stations</span>
+                                <br>
+                                <input type="checkbox" name="near-underpass" value="Underpass " class="macrocategory" id="TransferServiceAndRenting"> <img src="img/mapicons/TransferServiceAndRenting_Underpass.png" height="23" width="20" align="top"> <span class="TransferServiceAndRenting macrocategory-label">Underpass</span>
+                                <br>
+                                <input type="checkbox" name="near-air-quality-stations" value="Air_quality_monitoring_station" class="macrocategory" id="Environment"> <img src="img/mapicons/Environment_Air_quality_monitoring_station.png" height="23" width="20" align="top"> <span class="Environment macrocategory-label">Air_quality_monitoring_station</span>
+                                <br>
+                                <input type="checkbox" name="near-pollen-monitoring-stations" value="Pollen_monitoring_station" class="macrocategory" id="Environment"> <img src="img/mapicons/Environment_Pollen_monitoring_station.png" height="23" width="20" align="top"> <span class="Environment macrocategory-label">Pollen_monitoring_station</span>
+                                <br>
+                                <input type="checkbox" name="near-smart-waste-container" value="Smart_waste_container" class="macrocategory" id="Environment"> <img src="img/mapicons/Environment_Smart_waste_container.png" height="23" width="20" align="top"> <span class="Environment macrocategory-label">Smart_waste_container</span>
+                                <br>
+                                <input type="checkbox" name="near-smart-irrigator" value="Smart_irrigator" class="macrocategory" id="Environment"> <img src="img/mapicons/Environment_Smart_irrigator.png" height="23" width="20" align="top"> <span class="Environment macrocategory-label">Smart_irrigator</span>
+                                <br>
+                                <input type="checkbox" name="near-weather-sensor" value="Weather_sensor" class="macrocategory" id="Environment"> <img src="img/mapicons/Environment_Weather_sensor.png" height="23" width="20" align="top"> <span class="Environment macrocategory-label">Weather_sensor</span>
+                                <br>
+                                <input type="checkbox" name="near-noise_level_sensor" value="Noise_level_sensor" class="macrocategory" id="Environment"> <img src="img/mapicons/Environment_Noise_level_sensor.png" height="23" width="20" align="top"> <span class="Environment macrocategory-label">Noise_level_sensor</span>
+                                <br>
+                                <input type="checkbox" name="near-people_counter" value="People_counter" class="macrocategory" id="Environment"> <img src="img/mapicons/Environment_People_counter.png" height="23" width="20" align="top"> <span class="Environment macrocategory-label">People_counter</span>
+                                <br>
+                                <input type="checkbox" name="near-smart-bench" value="Smart_bench" class="macrocategory" id="Entertainment"> <img src="img/mapicons/Entertainment_Smart_bench.png" height="23" width="20" align="top"> <span class="Entertainment macrocategory-label">Smart_bench</span>
+                                <br>
+                                <input type="checkbox" name="near-first-aid" value="First_aid" class="macrocategory" id="Emergency"> <img src="img/mapicons/Emergency_First_aid.png" height="23" width="20" align="top"> <span class="Emergency macrocategory-label">First_aid</span>
+                                <br>
+                                <input type="checkbox" name="near-police" value="Police_headquarters " class="macrocategory" id="GovernmentOffice"> <img src="img/mapicons/GovernmentOffice_Police_headquarters.png" height="23" width="20" align="top"> <span class="GovernmentOffice  macrocategory-label">Police_headquarters</span>
+                            </div>                            
+                            <br>
+                            <span name="lbl" caption="Filter_Results_dx_T">Filter</span>:
+                            <br>
+                            <input type="text" name="serviceTextFilter_t" id="serviceTextFilter_t" placeholder="search text into service" onkeypress="event.keyCode == 13 ? ricercaServizi('categorie_t', null, null) : false"><br>
+                            <span name="lbl" caption="Num_Results_dx_T">N. results for each</span>:
+                            <select id="nResultsServizi_t" name="nResultsServizi">
+                                <option value="10">10</option>
+                                <option value="20">20</option>
+                                <option value="50">50</option>
+                                <option value="100" selected="selected">100</option>
+                                <option value="200">200</option>
+                                <option value="500">500</option>
+                                <option value="0">No Limit</option>
+                            </select>
+                            <br>
+                            <hr>
+                            <span name="lbl" caption="Search_Range_T">Search Range</span>
+                            <select id="raggioricerca_t" name="raggioricerca">
+                                <option value="0.1">100 mt</option>
+                                <option value="0.2">200 mt</option>
+                                <option value="0.3">300 mt</option>
+                                <option value="0.5">500 mt</option>
+                                <option value="1">1 km</option>
+                                <option value="2">2 km</option>
+                                <option value="5">5 km</option>
+                                <option value="area" selected="selected">visible areas</option>
+                            </select>
+                            <hr>
+                            <div class="menu" id="serviceSearch">
+                                <img src="img/search_icon.png" alt="Search Services" width="24" onclick="ricercaServizi('categorie_t', null, null);">
+                            </div>
+                            <!--<div class="menu" id="textSearch">
+                                <img src="img/text_search.jpg" alt="Text Search" width="28" onclick="showTextSearchDialog();" />
+                            </div>-->
+                            <div class="menu" id="clearAll">
+                                <img src="img/clear_icon.png" alt="Clear all" width="28" onclick="resetTotale();">
+                            </div>
+                            <!--<input type="checkbox" name="open_path" value="open_path" id="apri_path" />  <span>Open Path/Area</span>-->
+                            <!-- DA DECOMMENTARE QUANDO SARA' FATTO IL SALVATAGGIO DEI SERVIZI TRASVERSALI -->
+                            <div class="menu" id="saveQuery">
+                              <img src="img/save.png" alt="Salva la query" width="28" onclick="save_handler(null, null, null, null, 'query_t');">
+                            </div>
+                            <br>
+
+                        </div>
+                    </div>
+                    <div id="tree">
+                    </div>
+                </div>
+                <fieldset id="searchOutput"> 
+                    <legend><span name="lbl" caption="Search_Results">Search Results</span></legend>
+                    <div class="result" id="cluster-msg"></div>
+                    <div class="result" id="msg"></div>
+                    <div class="result" id="serviceRes"><img src="img/mapicons/TourismService.png" height="21" width="18" align="top"><span class="label">Services:</span><div class="value"></div></div>
+                    <div class="result" id="busstopRes"><img src="img/mapicons/TransferServiceAndRenting_BusStop.png" height="21" width="18" align="top"><span class="label">Bus Stops:</span><div class="value"></div></div>
+                    <div class="result" id="busDirection"><span class="label">Direction:</span><div class="value"></div></div>
+                    <div class="result" id="sensorRes"><img src="img/mapicons/TransferServiceAndRenting_SensorSite.png" height="21" width="18" align="top"><span class="label">Road Sensors:</span><div class="value"></div></div>
+                </fieldset>
+                <fieldset id="resultTPL"> 
+                    <legend><span name="lbl" caption="Results_BusLines">Bus Lines</span></legend>
+                    <div id="numTPL" style="display:none;"></div>
+                    <div id="listTPL"></div>
+                </fieldset>
+
+            </div>
+        </div>
+        
+        
+        <script>
+        
+            $(function(){
+      // bind change event to select
+      $('#superSm_selector').on('change', function () {
+          var url = $(this).val(); // get selected value
+          if (url) { // require a URL
+              window.location = url; // redirect
+          }
+          return false;
+      });
+    });
+        
+
+ "use strict";        
+
+var myInit={method:'GET',
+            headers:{'Content-Type':'application/json'
+            },
+            mode:'cors',
+            cache:'default'};
+            
+let myRequest=new Request("./config.json",myInit);
+        
+fetch(myRequest)
+  .then(function(resp){
+    return resp.json();
+  })
+  .then(function(data){
+    alert(data[0].natureApiUrl);
+  }).catch((error) => {
+  console.log(error);
+}); 
+
+
+        // Instantiate an new XHR Object
+        const xhr = new XMLHttpRequest();
+  
+        // Open an obejct (GET/POST, PATH, ASYN-TRUE/FALSE)
+        xhr.open("GET", "https://processloader.snap4city.org/processloader/api/dictionary/?type=nature", true);
+  
+        // When response is ready
+        xhr.onload = function () {
+            if (this.status === 200) {
+  
+                // Changing string data into JSON Object
+                obj = JSON.parse(this.responseText);
+  
+                var categorieDiv = document.getElementById("categorie");
+                nature = ""
+                for (key in obj.content) {
+                    var categorieDiv = document.getElementById("categorie");
+                    
+                    nature = `${obj.content[key].value}`;
+                    
+                    var checkbox_nature = document.createElement("input");                 // Create a checkbox node       
+                    // Assigning the attributes to created checkbox
+                    checkbox_nature.type = "checkbox";
+                    checkbox_nature.name = nature;
+                    checkbox_nature.value = nature;
+                    checkbox_nature.className = "macrocategory";
+                    categorieDiv.appendChild(checkbox_nature);
+                    
+                    var img_nature = document.createElement("img");                 // Create a img node 
+                    // Assigning the attributes to created img
+                    img_nature.src = "img/mapicons/"+nature+".png";
+                    img_nature.height = "23";
+                    img_nature.width = "20";
+                    img_nature.align = "top";
+                    categorieDiv.appendChild(img_nature);          
+
+                    var span_macro_nature = document.createElement("span");                 // Create a span node 
+                    // Assigning the attributes to created span
+                    span_macro_nature.className = nature+" macrocategory-label";
+                    span_macro_nature.textContent=nature;
+                    categorieDiv.appendChild(span_macro_nature);
+                        
+
+                    var span_plus_nature = document.createElement("span");                 // Create a plus span node 
+                    // Assigning the attributes to created span
+                    span_plus_nature.className = "toggle-subcategory";
+                    span_plus_nature.title="Mostra sottocategorie";
+                    span_plus_nature.textContent="+";
+                    span_plus_nature.id=nature+ '_nature_span';
+                    
+                    span_plus_nature.onclick = function() {
+                    
+                    manage_sub_nature(this.id);
+                    };
+                    
+                    categorieDiv.appendChild(span_plus_nature);
+                    
+                    subcategory_div = document.createElement("div");                  // Create a subcategory div node
+                    subcategory_div.className ="subcategory-content";
+                    subcategory_div.setAttribute('id', nature+'_subcategory_div');
+                    subcategory_div.style.display = "none";                    
+                    categorieDiv.appendChild(subcategory_div);
+                    
+                    var br = document.createElement('br');                                 // Add two brs
+                    categorieDiv.appendChild(br);
+                    } 
+            }else {
+                console.log("File not found");
+            }
+        }
+    
+        // At last send the request 
+        xhr.send();    
+
+    function manage_sub_nature(nature_span_id) {
+    
+            var nature=nature_span_id.substring(0,nature_span_id.indexOf('_'));
+            subcategory_div_id=nature + '_subcategory_div';
+            subcategory_div=document.getElementById(subcategory_div_id);
+
+            nature_plus_span=document.getElementById(nature_span_id);
+            nature_plus_span_text=nature_plus_span.textContent;
+        
+        if(nature_plus_span.innerHTML=='-'){
+            nature_plus_span.innerHTML = '+';
+            document.getElementById(subcategory_div_id).style.display = "none";                                    
+        }else{
+         
+        nature_plus_span.innerHTML='-'; 
+        
+        
+        document.getElementById(subcategory_div_id).innerHTML = ''
+        document.getElementById(subcategory_div_id).style.display = "block";                                    
+             
+        // Instantiate an new XHR Object
+        const xhr_subnature = new XMLHttpRequest();
+                  
+        // Open an obejct (GET/POST, PATH, ASYN-TRUE/FALSE)
+        xhr_subnature.open("GET", "https://processloader.snap4city.org/processloader/api/dictionary/?type=subnature", true);
+                        
+        // When response is ready
+        xhr_subnature.onload = function () {
+                            
+                            if (this.status === 200) {
+                  
+                                // Changing string data into JSON Object
+                                sub_nature_obj = JSON.parse(this.responseText);
+                  
+                                sub_nature = ""
+                                for (key in sub_nature_obj.content) {
+                                    if(sub_nature_obj.content[key].parent_value==nature){
+                                        //alert('here' + nature);
+                                        //alert(sub_nature_obj.content[key].parent_value);
+                                        sub_nature = `${sub_nature_obj.content[key].value}`;
+                                        //alert(sub_nature);
+                                        var checkbox_sub_nature = document.createElement("input");   // Create a subnature checkbox node       
+                                        // Assigning the attributes to created checkbox
+                                        checkbox_sub_nature.type = "checkbox";
+                                        checkbox_sub_nature.name = sub_nature;
+                                        checkbox_sub_nature.value = sub_nature;
+                                        checkbox_sub_nature.className = "sub_"+nature+ " subcategory";
+                                        subcategory_div.appendChild(checkbox_sub_nature);
+
+                                        var img_sub_nature = document.createElement("img");                 // Create a img node 
+                                        // Assigning the attributes to created img
+                                        img_sub_nature.src = "img/mapicons/"+nature+"_"+sub_nature+".png";
+                                        img_sub_nature.height = "19";
+                                        img_sub_nature.width = "16";
+                                        img_sub_nature.align = "top";
+                                        subcategory_div.appendChild(img_sub_nature);
+                                        
+                                        var span_sub_nature = document.createElement("span");                 // Create a plus span node 
+                                        // Assigning the attributes to created span
+                                        span_sub_nature.className = "Accommodation subcategory-label";
+                                        span_sub_nature.textContent=sub_nature;
+                                        subcategory_div.appendChild(span_sub_nature);
+                                        
+                                        var br = document.createElement('br');                                 // Add two brs
+                                        subcategory_div.appendChild(br);
+                                    }
+                                }
+                    }else{
+                        console.log("File not found");
+                    }
+                }
+
+                xhr_subnature.send();
+}
+
+
+}
+   
+    var mbAttr = 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery &copy; <a href="http://mapbox.com">Mapbox</a>',
+    mbUrl = 'https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoicGJlbGxpbmkiLCJhIjoiNTQxZDNmNDY0NGZjYTk3YjlkNTAzNWQwNzc0NzQwYTcifQ.CNfaDbrJLPq14I30N1EqHg';
+    var streets = L.tileLayer(mbUrl, {id: 'mapbox/streets-v11', attribution: mbAttr, tileSize: 512, zoomOffset: -1}),
+    satellite = L.tileLayer(mbUrl, {id: 'mapbox/satellite-streets-v11', attribution: mbAttr, tileSize: 512, zoomOffset: -1}),
+    grayscale = L.tileLayer(mbUrl, {id: 'mapbox/light-v10', attribution: mbAttr, tileSize: 512, zoomOffset: -1});
+                                    var map = L.map('map', {
+                                        center: [43.3555664, 11.0290384],
+                                        zoom: 8,
+                                        layers: [streets]
+                                    });
+                                    var baseMaps = {
+                                        "Streets": streets,
+                                        "Satellite": satellite,
+                                        "Grayscale": grayscale
+                                    };
+                                    var toggleMap = L.control.layers(baseMaps, null, {position: 'bottomright', width: '50px', height: '50px'});
+                                    toggleMap.addTo(map);
+                                    if (getUrlParameter("map") == "streets") {
+                                        map.removeLayer(satellite);
+                                        map.addLayer(streets);
+                                    }
+                                    else if (getUrlParameter("map") == "grayscale") {
+                                        map.removeLayer(satellite);
+                                        map.addLayer(grayscale);
+                                    }
+</script>
+
+</body><div id="overMap"></div>
+</html>
